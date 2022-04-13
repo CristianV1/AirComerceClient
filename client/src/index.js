@@ -12,33 +12,32 @@ import {
   ColorModeScript,
   extendTheme,
   theme,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 
 const customTheme = extendTheme({
   config: {
-    initialColorMode: 'light',
+    initialColorMode: "light",
     useSystemColorMode: false,
   },
   colors: {
     primary: theme.colors.blue,
   },
-})
+});
 
 ReactDOM.render(
   <React.StrictMode>
-    <AuthContextProvider>
-      <Provider store={store} >
-        <BrowserRouter>
-          <ChakraProvider theme={customTheme}>
-            <ColorModeScript initialColorMode={customTheme.config.initialColorMode} />
-            <App />
-          </ChakraProvider>
-        </BrowserRouter>
-      </Provider>
-
-    </AuthContextProvider>
+    <Provider store={store}>
+      <BrowserRouter>
+        <ChakraProvider theme={customTheme}>
+          <ColorModeScript
+            initialColorMode={customTheme.config.initialColorMode}
+          />
+          <App />
+        </ChakraProvider>
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
