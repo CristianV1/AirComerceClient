@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+/*import React, { createContext, useContext, useEffect, useState } from 'react'
 import { auth } from '../helpers/init-firebase'
 import {
   createUserWithEmailAndPassword,
@@ -76,4 +76,4 @@ export default function AuthContextProvider({ children }) {
     resetPassword,
   }
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
+}*/
