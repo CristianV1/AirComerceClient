@@ -36,7 +36,6 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import ProtectedUserRoute from "./ProtectedUserRoute";
 
-
 function App() {
   const dispatch = useDispatch();
 
@@ -53,13 +52,18 @@ function App() {
   }, [currentUser]);
   const cUser = JSON.parse(localStorage.getItem("User"));
   //console.log("AAAA", cUser);
+  console.log(process.env.APIURL);
   return (
     <div className="App">
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/home" element={<Home user={cUser} />} />
         <Route exact path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route exact path="/detailspage:id" element={<Details  user={cUser} />}></Route>
+        <Route
+          exact
+          path="/detailspage:id"
+          element={<Details user={cUser} />}
+        ></Route>
         <Route exact path="/cart" element={<CartPage />} />
 
         <Route element={<ProtectedUserRoute user={cUser} />}>
@@ -69,8 +73,6 @@ function App() {
           <Route exact path="/recover/:token" element={<ResetPasswordPage />} />
           <Route exact path="/confirm:token" element={<Confirm />} />
         </Route>
-    
-
 
         <Route element={<ProtectedAdminRoute user={cUser} />}>
           <Route
@@ -86,12 +88,16 @@ function App() {
           <Route
             exact
             path={"/admin/orders"}
-            element={<AdminLayout user={cUser} currentLinkActive={OrdersTable} />}
+            element={
+              <AdminLayout user={cUser} currentLinkActive={OrdersTable} />
+            }
           />
           <Route
             exact
             path={"/admin/flights"}
-            element={<AdminLayout user={cUser} currentLinkActive={flightsTable} />}
+            element={
+              <AdminLayout user={cUser} currentLinkActive={flightsTable} />
+            }
           />
           <Route
             exact
@@ -101,9 +107,14 @@ function App() {
           <Route
             exact
             path={"/admin/orders/:id"}
-            element={<AdminLayout user={cUser} currentLinkActive={DetailsAdmin} />}
+            element={
+              <AdminLayout user={cUser} currentLinkActive={DetailsAdmin} />
+            }
           />
-          <Route path="/admin/*" element={<Navigate to={"/admin/dashboard"} />} />
+          <Route
+            path="/admin/*"
+            element={<Navigate to={"/admin/dashboard"} />}
+          />
         </Route>
 
         <Route exact path="/confirm:token" element={<Confirm />} />
