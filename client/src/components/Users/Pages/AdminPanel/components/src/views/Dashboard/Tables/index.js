@@ -12,6 +12,7 @@ import Flights from "./components/Flights";
 import axios from "axios";
 
 let baseUrl = process.env.APIURL;
+baseUrl = "https://calm-citadel-95237.herokuapp.com/";
 
 export function UserTable() {
   let [allUsers, setAllUsers] = useState([]);

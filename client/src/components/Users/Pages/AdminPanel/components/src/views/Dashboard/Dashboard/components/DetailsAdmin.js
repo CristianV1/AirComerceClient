@@ -24,6 +24,7 @@ function Details() {
 
   let [user, setUser] = useState({ username: "", password: "", id: "" });
   let baseUrl = process.env.APIURL;
+  baseUrl = "https://calm-citadel-95237.herokuapp.com/";
   const textColor = useColorModeValue("gray.700", "white");
   const bgProfile = useColorModeValue(
     "hsla(0,0%,100%,.8)",

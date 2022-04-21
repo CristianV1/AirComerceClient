@@ -34,6 +34,7 @@ function TablesTableRow(props) {
   let [admin, setAdmin] = useState(isAdmin);
 
   let baseUrl = process.env.APIURL;
+  baseUrl = "https://calm-citadel-95237.herokuapp.com/";
   async function changeUserState(adminVal) {
     let json = await axios.request({
       method: "put",

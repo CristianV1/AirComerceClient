@@ -19,6 +19,7 @@ import { signIn, signInGoogle } from "../../../../redux/actions/actions";
 
 export function LoginForm() {
   let baseUrl = process.env.APIURL;
+  baseUrl = "https://calm-citadel-95237.herokuapp.com/";
   const [inputs, setInputs] = useState({
     username: "",
     password: "",

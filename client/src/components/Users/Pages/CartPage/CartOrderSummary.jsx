@@ -33,6 +33,7 @@ export const CartOrderSummary = () => {
   };
 
   let baseUrl = process.env.APIURL;
+  baseUrl = "https://calm-citadel-95237.herokuapp.com/";
   useEffect(() => {
     const makeRequest = async () => {
       try {

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { TYPES } from "./types";
 let baseUrl = process.env.APIURL;
-
+baseUrl = "https://calm-citadel-95237.herokuapp.com/";
 export const changePage = (number) => {
   return {
     type: TYPES.CHANGE_PAGE,
