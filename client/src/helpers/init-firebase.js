@@ -1,9 +1,8 @@
 // Import the functions you need from the SDKs you need
-//import { initializeApp } from "firebase/app";
-//import {getAuth} from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import {getAuth} from "firebase/auth";
 
 // Your web app's Firebase configuration
-/*
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
     authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -17,4 +16,3 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app)
-*/

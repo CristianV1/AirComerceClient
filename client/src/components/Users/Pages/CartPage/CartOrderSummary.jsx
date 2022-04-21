@@ -2,120 +2,124 @@ import {
   Button,
   Flex,
   Heading,
-  Link,
+  // Link,
   Stack,
   Text,
   useColorModeValue as mode,
   useToast,
-} from '@chakra-ui/react'
-import { useSelector } from "react-redux";
-import { FaArrowRight } from 'react-icons/fa'
-import StripeCheckout from 'react-stripe-checkout'
+} from "@chakra-ui/react";
+import { useDispatch, useSelector } from "react-redux";
+import { FaArrowRight } from "react-icons/fa";
+import StripeCheckout from "react-stripe-checkout";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../../context/AuthContext';
-
-const STRIPE_KEY = "pk_test_51KmQZ1Cz6RSCMCCXpRfTNxGgQFkHovBTwCQqgw162K050s9JxuyO4pQQBz70izz0LQeKE29rVsQNZZ5YtjcOT0zc00jGxHBB6r"
+import { useNavigate } from "react-router-dom";
+// import { useAuth } from '../../../../context/AuthContext';
+import { calculateTotal } from "../../../../redux/actions/actions";
+// import defaultPhoto from "../../../../assets/defaultPhoto.png"
+const STRIPE_KEY =
+  "pk_test_51KmQZ1Cz6RSCMCCXpRfTNxGgQFkHovBTwCQqgw162K050s9JxuyO4pQQBz70izz0LQeKE29rVsQNZZ5YtjcOT0zc00jGxHBB6r";
 
 export const CartOrderSummary = () => {
-  const toast = useToast()
-  const cart = useSelector(state => state.cart)
-  const { currentUser } = useAuth()
-  const navigate = useNavigate()
-  const [stripeToken, setStripeToken] = useState()
+  const toast = useToast();
+  const calculatedTotal = useSelector((state) => state.calculatedTotal);
+  const dispatch = useDispatch();
+  // const { currentUser } = useAuth()
+  const currentUser = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const [stripeToken, setStripeToken] = useState();
   const onToken = (token) => {
-    setStripeToken(token)
-  }
+    setStripeToken(token);
+  };
 
+  let baseUrl = process.env.APIURL;
   useEffect(() => {
     const makeRequest = async () => {
       try {
-        const response = axios.post("http://localhost:3001/api/payments", {
+        const response = axios.post(`${baseUrl}api/payment`, {
           tokenId: stripeToken.id,
-          amount: 2000
-        }
-        );
-        navigate("/success")
-        console.log(response.data)
+          amount: calculatedTotal * 100,
+        });
+        navigate("/success");
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-    stripeToken && makeRequest()
-  }, [stripeToken, navigate])
+    };
+    stripeToken && makeRequest();
+    dispatch(calculateTotal());
+  }, [stripeToken, navigate, dispatch, calculatedTotal]);
+
   return (
     <Stack spacing="8" borderWidth="1px" rounded="lg" padding="8" width="full">
       <Heading size="md">Order Summary</Heading>
 
       <Stack spacing="6">
-
         <Flex justify="space-between">
           <Text fontSize="lg" fontWeight="semibold">
             Total
           </Text>
+
           <Text fontSize="xl" fontWeight="extrabold">
-            {cart.length > 0 && cart.map(c =>
-              c.price * c.quantity
-            )}
+            {calculatedTotal}
           </Text>
         </Flex>
-
       </Stack>
+
       <div>
-        {
-          stripeToken ? (
-            <Button
-              colorScheme="blue"
-              size="lg" fontSize="md"
-              rightIcon={<FaArrowRight
-              />}>
-              Processing. Please wait..
-            </Button>
-          ) : (
-            <div>
-
-              {currentUser ?
-                <StripeCheckout
-                  name="Heading North"
-                  image="#"
-                  billingAddress
-                  shippingAddress
-                  description=" Your total is $ 73"
-                  amount={2000}
-                  token={onToken}
-                  stripeKey={STRIPE_KEY}
+        {stripeToken ? (
+          <Button
+            colorScheme="blue"
+            size="lg"
+            fontSize="md"
+            rightIcon={<FaArrowRight />}
+          >
+            Processing. Please wait..
+          </Button>
+        ) : (
+          <div>
+            {currentUser.confirmationCode ? (
+              <StripeCheckout
+                name="Heading North"
+                image="https://img.freepik.com/vector-gratis/billetes-avion-blanco_98292-4202.jpg?w=2000"
+                billingAddress
+                shippingAddress
+                description={`Your total is $ ${calculatedTotal}`}
+                amount={calculatedTotal * 100}
+                token={onToken}
+                stripeKey={STRIPE_KEY}
+              >
+                <Button
+                  colorScheme="blue"
+                  size="lg"
+                  fontSize="md"
+                  rightIcon={<FaArrowRight />}
                 >
-                  <Button colorScheme="blue" size="lg" fontSize="md" rightIcon={<FaArrowRight />}>
-                    Checkout
-                  </Button>
-                </StripeCheckout>
-                :
-                <>
-                  <Button
-                    colorScheme="blue"
-                    size="lg" fontSize="md"
-                    rightIcon={<FaArrowRight />}
-                    onClick={() =>
-                      toast({
-                        description: "You must to be login",
-                        status: 'error',
-                        duration: 9000,
-                        isClosable: true,
-                      })}
-                  >
-                    Checkout
-                  </Button>
-
-                </>
-              }
-            </div>
-          )}
+                  Checkout
+                </Button>
+              </StripeCheckout>
+            ) : (
+              <>
+                <Button
+                  colorScheme="blue"
+                  size="lg"
+                  fontSize="md"
+                  rightIcon={<FaArrowRight />}
+                  onClick={() =>
+                    toast({
+                      description: "You must to be login",
+                      status: "error",
+                      duration: 3000,
+                      isClosable: true,
+                    })
+                  }
+                >
+                  Checkout
+                </Button>
+              </>
+            )}
+          </div>
+        )}
       </div>
-
-
-
-
     </Stack>
-  )
-}
+  );
+};

@@ -1,21 +1,41 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-lone-blocks */
 import React from "react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "./Card";
+import { Link } from "react-router-dom";
 import Paged from "./Paged/Paged";
-import { SimpleGrid } from "@chakra-ui/react";
-import NavBar from "./NavBar/NavBar";
+
+import {
+  SimpleGrid,
+  Text,
+  Center,
+  AlertIcon,
+  Alert,
+  AlertTitle,
+  CloseButton,
+} from "@chakra-ui/react";
+
+
 import CallToAction from "./CallToAction/CallToAction";
-import { getCities } from "../../../redux/actions/actions";
+import {
+  dispatchUser,
+  getCities,
+  signInGoogle,
+} from "../../../redux/actions/actions";
 import LoadingPage from "./Loading/LoadingPage";
 import LoadingSection from "./Loading/LoadingSection";
+import WithSubnavigation from "./NavBar";
 
-export default function Home() {
+export default function Home({ user }) {
   const dispatch = useDispatch();
+
   let cities = useSelector((state) => state.city);
   const search = useSelector((state) => state.search);
+  const errors = useSelector((state) => state.errorMessage);
   const IsOnSearch = useSelector((state) => state.isSearching);
-
+  // const currentUser = useSelector((state) => state.user);
   const [isLoading, setIsLoading] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,27 +46,41 @@ export default function Home() {
     indexOfFirstCharacter,
     indexOfLastCharacter
   );
+  const [buttons, setButtons] = React.useState([]);
+  const [subArray, setSubArray] = React.useState([]);
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  console.log(IsOnSearch);
+  // function setFavorite(Card) {
+  //  dispatch(addFavorite(Card));
+  //  alert("Add to Favorite Successfully!");
+  //}
+
+  //console.log(IsOnSearch);
   useEffect(() => {
     if (search.length > 0) {
       setIsLoading(false);
     }
   }, [search]);
+  const currentUser = useSelector((state) => state.user);
+
+  useEffect(() => {
+    dispatch(dispatchUser(user));
+    // dispatch(signInGoogle())
+  }, []);
 
   useEffect(() => {
     dispatch(getCities());
-  }, [dispatch]);
+    // dispatch(signInGoogle())
+  }, [dispatch, currentUser]);
   return (
     <div>
       {isLoading ? <LoadingPage></LoadingPage> : <></>}
-      <NavBar />
+      <WithSubnavigation user={user} />
       <CallToAction />
-      {/* {cities.hasOwnProperty(cities.departure) ? */}
+
       <div>
         <Paged
           TicketsPerPage={TicketsPerPage}
@@ -55,12 +89,30 @@ export default function Home() {
           currentPage={currentPage}
         />
         {IsOnSearch ? <LoadingSection /> : <></>}
+
+        {errors.map((error) => {
+          return (
+            <Center width={"100vw"}>
+              <Alert width={80} status="warning">
+                <AlertIcon />
+                <AlertTitle mr={2}>{error}</AlertTitle>
+              </Alert>
+            </Center>
+          );
+        })}
+
         <SimpleGrid columns={[2, null, 3]} spacing="40px">
           {currentTickets &&
           currentTickets.length === 1 &&
           currentTickets[0]?.departure === undefined &&
           currentTickets[0]?.arrival === undefined ? (
-            <p>Not flight avaiable</p>
+            <Center width={"100vw"}>
+              <Alert width={80} status="error">
+                <AlertIcon />
+                <AlertTitle mr={2}> Not flight avaiable!</AlertTitle>
+                <CloseButton position="absolute" right="8px" top="8px" />
+              </Alert>
+            </Center>
           ) : (
             currentTickets.map((o) => {
               {
@@ -85,6 +137,21 @@ export default function Home() {
           )}
         </SimpleGrid>
       </div>
+
+      {/* //    <div>
+   //     {subArray.length !== 0 ? ( subArray its not define
+   //       subArray.map((Card) => (
+   //         <div>
+    //          <Link to={`//api/flights/detail/${Card.id}`}>
+      //          <Card props={Card} onClick={() => onClick(Card.id)} />
+        //      </Link>
+          //    <buttons onClick={() => setFavorite(Card)}> AddF </buttons>
+            //</div>
+         // ))
+       // ) : (
+        //  <p>Card not found.</p>
+       // )}
+     // </div> */}
     </div>
   );
 }

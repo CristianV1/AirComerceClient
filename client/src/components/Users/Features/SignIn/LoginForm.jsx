@@ -9,24 +9,36 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-// import { Card } from '../components/Card'
 import DividerWithText from "../UserModal/components/DividerWithText";
-import { useAuth } from "../../../../context/AuthContext";
-import useMounted from "../../../../hooks/useMounted";
+
+import { useDispatch, useSelector } from "react-redux";
+import { signIn, signInGoogle } from "../../../../redux/actions/actions";
 
 export function LoginForm() {
+  let baseUrl = process.env.APIURL;
   const [inputs, setInputs] = useState({
-    email: "",
+    username: "",
     password: "",
   });
-  const [submit, setSubmit] = useState(false);
-  const toast = useToast();
-  const { login, signInWithGoogle } = useState(false);
+
   const navigate = useNavigate();
-  const mounted = useMounted();
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user);
+  const toast = useToast();
+
+  useEffect(() => {
+    if (currentUser?.accessToken || currentUser?.message)
+      toast({
+        description: currentUser?.message,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    navigate("/home");
+  }, [currentUser]);
 
   function handlerOnChange(e) {
     setInputs({
@@ -34,79 +46,47 @@ export function LoginForm() {
       [e.target.name]: e.target.value,
     });
   }
+  // console.log(inputs)
 
-  async function hanldlerSignIn() {
-    try {
-      const user = await signInWithGoogle();
-      console.log(user);
-    } catch (error) {
-      console.log(error);
-    }
+  function handlerGoogle(e) {
+    window.open(`${baseUrl}api/auth/google`, `_self`);
+  }
+
+  function hanldlerSignIn() {
+    handlerGoogle();
+    dispatch(signInGoogle());
+  }
+
+  function handlerSubmit(e) {
+    e.preventDefault();
+    dispatch(signIn(inputs));
   }
   return (
     <>
-      <chakra.form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          // login logic
-          if (!inputs.email || !inputs.password) {
-            toast({
-              description: "Credentials not valid.",
-              status: "error",
-              duration: 9000,
-              isClosable: true,
-            });
-          }
-          setSubmit(true);
-          login(inputs.email, inputs.password)
-            .then((res) => {
-              console.log(res);
-              navigate("/profile");
-            })
-            .catch((error) => {
-              console.log(error.message);
-              toast({
-                description: error.message,
-                status: "error",
-                duration: 9000,
-                isClosable: true,
-              });
-            })
-            .finally(() => {
-              mounted.current && setSubmit(false);
-            });
-        }}
-      >
+      <chakra.form onSubmit={handlerSubmit}>
         <Stack spacing="6">
-          <FormControl id="email">
-            <FormLabel>Email address</FormLabel>
+          <FormControl>
+            <FormLabel>Username</FormLabel>
 
             <Input
-              name="email"
-              type="email"
-              autoComplete="email"
+              name="username"
+              id="username"
               required
               onChange={handlerOnChange}
             />
           </FormControl>
-          <FormControl id="password">
+          <FormControl>
             <FormLabel>Password</FormLabel>
             <Input
               name="password"
               type="password"
-              autoComplete="password"
+              id="password"
               required
               onChange={handlerOnChange}
             />
           </FormControl>
           {/* <PasswordField /> */}
-          <Button
-            isLoading={submit}
-            type="submit"
-            colorScheme="primary"
-            size="lg"
-            fontSize="md"
-          >
+          <Button type="submit" colorScheme="primary" size="lg" fontSize="md">
             Sign in
           </Button>
         </Stack>

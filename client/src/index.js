@@ -6,38 +6,39 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store/store";
-import AuthContextProvider from "./context/AuthContext";
+
 import {
   ChakraProvider,
   ColorModeScript,
   extendTheme,
   theme,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
 const customTheme = extendTheme({
   config: {
-    initialColorMode: "light",
+    initialColorMode: 'light',
     useSystemColorMode: false,
   },
   colors: {
     primary: theme.colors.blue,
   },
-});
+})
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <ChakraProvider theme={customTheme}>
-          <ColorModeScript
-            initialColorMode={customTheme.config.initialColorMode}
-          />
-          <App />
-        </ChakraProvider>
-      </BrowserRouter>
-    </Provider>
+ 
+      <Provider store={store} >
+        <BrowserRouter>
+          <ChakraProvider theme={customTheme}>
+            <ColorModeScript initialColorMode={customTheme.config.initialColorMode} />
+            <App />
+          </ChakraProvider>
+        </BrowserRouter>
+      </Provider>
+
+
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function
